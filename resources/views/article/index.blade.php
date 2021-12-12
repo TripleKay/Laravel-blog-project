@@ -13,11 +13,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div class="">
-                            {{ $articles->links() }}
+                            {{ $articles->appends(Request::all())->links() }}
                         </div>
                         <div class="">
-                            <form action="{{ route('article.search') }}" method="POST">
-                                @csrf
+                            <form action="{{ route('article.search') }}" method="GET">
+
                                 <div class="form-inline mb-3">
                                     <input type="text" name="search" class="form-control mr-2">
                                     <button class="btn btn-primary">Search</button>

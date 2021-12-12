@@ -23,4 +23,4 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource("article","ArticleController");
-Route::post("article-search","ArticleController@search")->name('article.search');
+Route::get("article-search","ArticleController@search")->name('article.search');
