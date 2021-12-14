@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use App\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -41,15 +43,43 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
+        //photo requied စစ်ရန်
+        // if(!$request->hasFile("photo")){
+        //     return redirect()->back()->withErrors(["photo.*"=>"Photo is required"]);
+        // }
         $request->validate([
             "title"=>"required|min:10|max:255",
-            "description"=>"required|min:30"
+            "description"=>"required|min:30",
+            "photo.*"=>"mimetypes:image/jpeg,image/png"
         ]);
+
+        //photo သိမ်းရန် to /public/article/
+        if($request->hasFile("photo")){
+            $fileNameArr = [];
+            foreach($request->file("photo") as $file){
+                $newFileName = uniqid()."_profile.".$file->getClientOriginalExtension();
+                array_push($fileNameArr,$newFileName);
+                $dir = "/public/article/";
+                $file->storeAs($dir,$newFileName);
+            }
+        }
+
+        //article သိမ်းရန် to article database
         $article = new Article();
         $article->title = $request->title;
         $article->description = $request->description;
         $article->user_id = Auth::id();
         $article->save();
+
+        //photofileName သိမ်းရန် to photo database
+        if($request->hasFile("photo")){
+            foreach($fileNameArr as $f){
+                $photo = new Photo();
+                $photo->article_id = $article->id;
+                $photo->location = $f;
+                $photo->save();
+            }
+        }
         return redirect()->route("article.create")->with("status","<b>$request->title</b> is added.");
     }
 

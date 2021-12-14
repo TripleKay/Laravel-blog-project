@@ -1,5 +1,19 @@
 @extends('layouts.app')
 
+@section('head')
+    <style>
+        .article-thumnail{
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border-radius: .25rem;
+            margin-top: 10px;
+            background-size: 200%;
+        }
+    </style>
+
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row">
@@ -37,51 +51,64 @@
                         </p>
 
                     @endif
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Owner</th>
-                                <th>Control</th>
-                                <th class="text-nowrap">Created At</th>
-                            </tr>
-                        </thead>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-hover table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Owner</th>
+                                        <th>Control</th>
+                                        <th class="text-nowrap">Created At</th>
+                                    </tr>
+                                </thead>
 
-                        <tbody>
-                            @inject('users', 'App\User')
-                            @foreach ($articles as $article)
+                                <tbody>
+                                    @inject('users', 'App\User')
+                                    @inject('photo', 'App\Photo')
+                                    @foreach ($articles as $article)
 
-                            <tr>
-                                <td>{{ $article->id }}</td>
-                                <td>{{ substr($article->title,0,50) }}.....</td>
-                                <td>{{ substr($article->description,0,80) }}.....</td>
-                                <td class="text-nowrap">{{ $users->find($article->user_id)->name }}</td>
-                                <td class="text-nowrap">
-                                    <a href="{{ route("article.show",$article->id) }}" class="btn btn-sm btn-info">
-                                        Details
-                                    </a>
-                                    <a href="{{ route("article.edit",$article->id) }}" class="btn btn-sm btn-secondary">
-                                        Edit
-                                    </a>
-                                    <button type="submit" form="del" class="btn btn-sm btn-danger">Delete</button>
-                                    <form id="del" action="{{ route("article.destroy",$article->id) }}" method="POST">
-                                        @csrf
-                                        @method("delete")
-                                    </form>
-                                </td>
-                                <td>
-                                    <small class="text-nowrap">
-                                        {{ $article->created_at->format("d M Y") }}
-                                        <br>
-                                        {{ $article->created_at->format("h:i a") }}
-                                    </small>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    <tr>
+                                        <td>{{ $article->id }}</td>
+                                        <td style="max-width: 250px;">{{ substr($article->title,0,50) }}.....</td>
+                                        <td class="text-wrap" style="max-width: 450px;">
+                                            <div class="">
+                                                {{ substr($article->description,0,80) }}.....
+                                            </div>
+                                            @foreach ($photo->where("article_id",$article->id)->get() as $img)
+                                               <div class="article-thumnail shadow-sm" style="background-image: url('{{ asset("storage/article/".$img->location) }}')">
+                                               </div>
+                                            @endforeach
+                                        </td>
+                                        <td class="text-nowrap">{{ $users->find($article->user_id)->name }}</td>
+                                        <td class="">
+                                            <a href="{{ route("article.show",$article->id) }}" class="btn btn-sm btn-info">
+                                                Details
+                                            </a>
+                                            <a href="{{ route("article.edit",$article->id) }}" class="btn btn-sm btn-secondary my-2">
+                                                Edit
+                                            </a>
+                                            <button type="submit" form="del" class="btn btn-sm btn-danger">Delete</button>
+                                            <form id="del" action="{{ route("article.destroy",$article->id) }}" method="POST">
+                                                @csrf
+                                                @method("delete")
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <small class="text-nowrap">
+                                                {{ $article->created_at->format("d M Y") }}
+                                                <br>
+                                                {{ $article->created_at->format("h:i a") }}
+                                            </small>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

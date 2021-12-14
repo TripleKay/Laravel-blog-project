@@ -18,9 +18,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::get("about","PageController@about")->name("page.about");
+Route::get("article","PageController@article")->name("page.article");
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::prefix("user-dashboard")->middleware("auth")->group(function(){
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::resource("article","ArticleController");
+    Route::resource("photo","PhotoController");
+    Route::get("/profile","ProfileController@edit")->name("profile.edit");
+    Route::post("/profile","ProfileController@update")->name("profile.update");
+});
 
-Route::resource("article","ArticleController");
 Route::get("article-search","ArticleController@search")->name('article.search');
+Auth::routes();
