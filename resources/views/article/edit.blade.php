@@ -32,7 +32,7 @@
                             </p>
                         @endif
                         <div class="card-body">
-                            @inject('photo', 'App\Photo')
+                            {{-- @inject('photo', 'App\Photo') --}}
                             <form action="{{ route("article.update",$article->id) }}" id="article-form" method="POST">
                                 @csrf
                                 @method('put')
@@ -62,7 +62,7 @@
                 <div class="col-12 col-md-5">
                     <div class="card">
                         <div class="card-body">
-                            @foreach ($photo->where("article_id",$article->id)->get() as $img)
+                            @foreach ( $article->getPhotos as $img)
                             <div class="d-inline-block">
                                 <div class="article-thumnail shadow-sm" style="background-image: url('{{ asset("storage/article/".$img->location) }}')">
                                 </div>

@@ -66,8 +66,8 @@
                                 </thead>
 
                                 <tbody>
-                                    @inject('users', 'App\User')
-                                    @inject('photo', 'App\Photo')
+                                    {{-- @inject('users', 'App\User')
+                                    @inject('photo', 'App\Photo') --}}
                                     @foreach ($articles as $article)
 
                                     <tr>
@@ -77,12 +77,18 @@
                                             <div class="">
                                                 {{ substr($article->description,0,80) }}.....
                                             </div>
-                                            @foreach ($photo->where("article_id",$article->id)->get() as $img)
+                                            @foreach ($article->getPhotos as $img)
                                                <div class="article-thumnail shadow-sm" style="background-image: url('{{ asset("storage/article/".$img->location) }}')">
                                                </div>
                                             @endforeach
                                         </td>
-                                        <td class="text-nowrap">{{ $users->find($article->user_id)->name }}</td>
+                                        <td class="text-nowrap">
+                                            @isset($article->getUser)
+                                            {{ $article->getUser->name }}
+                                                @else
+                                                Unknow
+                                            @endisset
+                                        </td>
                                         <td class="">
                                             <a href="{{ route("article.show",$article->id) }}" class="btn btn-sm btn-info">
                                                 Details
@@ -90,10 +96,10 @@
                                             <a href="{{ route("article.edit",$article->id) }}" class="btn btn-sm btn-secondary my-2">
                                                 Edit
                                             </a>
-                                            <button type="submit" form="del" class="btn btn-sm btn-danger">Delete</button>
-                                            <form id="del" action="{{ route("article.destroy",$article->id) }}" method="POST">
+                                            <form  action="{{ route("article.destroy",$article->id) }}" class="d-inline-block" method="POST">
                                                 @csrf
                                                 @method("delete")
+                                                <button type="submit"  class="btn btn-sm btn-danger">Delete</button>
                                             </form>
                                         </td>
                                         <td>

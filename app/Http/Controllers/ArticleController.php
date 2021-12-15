@@ -133,6 +133,18 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+
+        if(isset($article->getPhotos)){
+            //1.to Delete Photo from storage
+            $dir = "/public/article/";
+            foreach($article->getPhotos as $p){
+                Storage::delete($dir.$p->location);
+            }
+            //2.to Delete Photo from Database
+            $toDel = $article->getPhotos->pluck("id");
+            Photo::destroy($toDel);
+         }
+         //3.to Delete article from Database
         $title =$article->title;
         $article->delete();
         return redirect()->route("article.index")->with("status","<b>$title</b> is deleted.");

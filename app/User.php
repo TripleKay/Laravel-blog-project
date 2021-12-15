@@ -36,4 +36,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getPhoto(){
+        return $this->hasManyThrough(Photo::class,Article::class,"user_id","article_id");
+    }
 }
