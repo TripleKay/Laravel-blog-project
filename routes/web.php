@@ -27,6 +27,7 @@ Route::prefix("user-dashboard")->middleware("auth")->group(function(){
     Route::resource("photo","PhotoController");
     Route::get("/profile","ProfileController@edit")->name("profile.edit");
     Route::post("/profile","ProfileController@update")->name("profile.update");
+    Route::post("/profile/change-password","ProfileController@changePassword")->name("profile.changePassword");
 });
 
 Route::get("article-search","ArticleController@search")->name('article.search');
